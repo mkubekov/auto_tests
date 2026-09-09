@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Tool caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ty_cache/
+
+# Local configuration (copy .env.example to .env)
+.env
+
+# Test artifacts
+allure-results/
+allure-report/
+test-results/
+
+# IDEs and OS files
+.idea/
+.vscode/
+.DS_Store

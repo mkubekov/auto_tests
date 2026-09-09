@@ -1,0 +1,99 @@
+[project]
+name = "cms-autotests"
+version = "1.0.0"
+description = "pytest + Playwright + Allure template for testing a content CMS through its API, admin panel and public site"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+authors = [{ name = "Murat Kubekov", email = "49613232+Clorhexidinum@users.noreply.github.com" }]
+keywords = ["pytest", "playwright", "allure", "test-automation", "cms", "template"]
+dependencies = [
+    "pydantic>=2.11,<3",
+    "pydantic-settings>=2.6,<3",
+    "pytest>=8.4,<9",
+    "pytest-playwright>=0.7.1,<0.8",
+    "playwright>=1.49",
+    "pytest-xdist>=3.6,<4",
+    "pytest-rerunfailures>=15,<16",
+    "allure-pytest>=2.15,<3",
+    "Faker>=30",
+    "requests>=2.32,<3",
+    "curlify>=2.2,<3",
+    "beautifulsoup4>=4.12,<5",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14.6,<0.15",
+    "pre-commit>=4.0,<5",
+    "ty>=0.0.75,<0.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["cmstest"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers --alluredir=allure-results"
+# Warnings stay visible but never fail a run by themselves. Unit tests are run with
+# `-W error::UserWarning` in CI to catch pydantic serializer warnings early.
+filterwarnings = ["default"]
+# --reruns is passed only in CI so there is a single source of truth for retry policy.
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort
+    "N",      # pep8-naming
+    "UP",     # pyupgrade
+    "B",      # flake8-bugbear
+    "C4",     # flake8-comprehensions
+    "SIM",    # flake8-simplify
+    "S",      # flake8-bandit
+    "T20",    # flake8-print
+    "BLE",    # flake8-blind-except
+    "RET",    # flake8-return
+    "A",      # flake8-builtins
+    "C90",    # mccabe
+    "PT",     # flake8-pytest-style
+    "RUF012", # mutable class default
+    "RUF100", # unused noqa
+]
+ignore = [
+    "E501",   # line length is enforced by the formatter
+    "B008",   # pydantic `Field(...)` in defaults is idiomatic
+    "N815",   # camelCase attributes mirror API field names
+    "S101",   # assert is the assertion tool of a test framework
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]        # re-exports
+"tests/**" = ["S105", "S106"]   # fake credentials in unit tests
+
+[tool.ruff.lint.isort]
+known-first-party = ["cmstest"]
+
+[tool.ruff.lint.mccabe]
+# `check_created_item` methods are long chains of field checks, not branching logic.
+max-complexity = 12
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+
+[tool.ty.environment]
+python-version = "3.11"
+
+[tool.ty.src]
+include = ["cmstest", "tests"]
